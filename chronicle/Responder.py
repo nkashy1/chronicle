@@ -12,3 +12,7 @@ class Responder(object):
     @abc.abstractmethod
     def notify(self, notification):
         return None
+
+
+class Notification(object):
+    pass

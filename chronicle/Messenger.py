@@ -39,7 +39,6 @@ def is_magical(attribute_name):
         return True
     return False
 
-
 def is_nonmagical(attribute_name):
     return not is_magical(attribute_name)
 
