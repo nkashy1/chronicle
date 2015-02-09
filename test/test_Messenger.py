@@ -16,10 +16,15 @@ from chronicle.messenger import MessengerAttributeError
 class MessengerBaseTests(unittest.TestCase):
     def setUp(self):
         self.core_object = self.setup_object()
-        self.messenger = Messenger(self.core_object)
+        self.responder = self.setup_responder()
+        self.messenger = Messenger(self.core_object, self.responder)
     
     def setup_object(self):
         return self.CoreClass()
+    
+    def setup_responder(self):
+        responder = mock.Mock()
+        return responder
     
     class CoreClass(object):
         def __init__(self):
@@ -39,7 +44,7 @@ class MessengerBaseTests(unittest.TestCase):
         for attribute_name in self.messenger._forbidden_attribute_names_:
             clash_object = self.setup_object()
             setattr(clash_object, attribute_name, None)
-            self.assertRaises(MessengerAttributeError, Messenger, clash_object)
+            self.assertRaises(MessengerAttributeError, Messenger, clash_object, self.responder)
     
     def is_magical(self, attribute_name):
         dunder = '__'
@@ -70,9 +75,22 @@ class MessengerMethodTests(MessengerBaseTests):
         
         def method(self):
             return 'method'
+        
+        def successor(self, a):
+            return a + 1
     
     def test_method_call(self):
-        self.assertEqual(self.messenger.method(), self.core_object.method())
+        messenger_result = self.messenger.method()
+        core_object_result = self.core_object.method()
+        self.assertEqual(messenger_result, core_object_result)
+        self.responder.notify.assert_called_once_with('method')
+    
+    def test_successor_call(self):
+        argument = 1
+        messenger_result = self.messenger.successor(argument)
+        core_object_result = self.core_object.successor(argument)
+        self.assertEqual(messenger_result, core_object_result)
+        self.responder.notify.assert_called_once_with('successor', argument)
 
 
 if __name__ == '__main__':
