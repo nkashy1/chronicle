@@ -44,7 +44,8 @@ class MessengerBaseTests(unittest.TestCase):
         for attribute_name in self.messenger._forbidden_attribute_names_:
             clash_object = self.setup_object()
             setattr(clash_object, attribute_name, None)
-            self.assertRaises(MessengerAttributeError, Messenger, clash_object, self.responder)
+            if not self.is_magical(attribute_name):
+                self.assertRaises(MessengerAttributeError, Messenger, clash_object, self.responder)
     
     def is_magical(self, attribute_name):
         dunder = '__'
@@ -66,6 +67,12 @@ class MessengerMemberTests(MessengerBaseTests):
                 core_object_attribute_value = getattr(self.core_object, attribute)
                 messenger_attribute_value = getattr(self.messenger, attribute)
                 self.assertIs(messenger_attribute_value, core_object_attribute_value)
+    
+    def test_increment(self):
+        member_value = self.core_object.member
+        self.messenger.member = self.messenger.member + 1
+        updated_value = self.core_object.member
+        self.assertEqual(updated_value, member_value + 1)
 
 
 class MessengerMethodTests(MessengerBaseTests):
