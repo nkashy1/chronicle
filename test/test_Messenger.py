@@ -61,7 +61,6 @@ class MessengerMemberTests(MessengerBaseTests):
     
     def test_member_values(self):
         core_object_attributes = dir(self.core_object)
-        messenger_attributes = dir(self.messenger)
         for attribute in core_object_attributes:
             if not self.is_magical(attribute):
                 core_object_attribute_value = getattr(self.core_object, attribute)
@@ -73,6 +72,13 @@ class MessengerMemberTests(MessengerBaseTests):
         self.messenger.member = self.messenger.member + 1
         updated_value = self.core_object.member
         self.assertEqual(updated_value, member_value + 1)
+    
+    def test_member_logging(self):
+        core_object_attributes = dir(self.core_object)
+        for attribute in core_object_attributes:
+            if attribute in self.messenger._core_members_:
+                test = getattr(self.messenger, attribute)
+                self.responder.notify.assert_called_once_with((attribute, None, None))
 
 
 class MessengerMethodTests(MessengerBaseTests):
@@ -90,14 +96,14 @@ class MessengerMethodTests(MessengerBaseTests):
         messenger_result = self.messenger.method()
         core_object_result = self.core_object.method()
         self.assertEqual(messenger_result, core_object_result)
-        self.responder.notify.assert_called_once_with('method')
+        self.responder.notify.assert_called_once_with(('method', (), {}))
     
     def test_successor_call(self):
         argument = 1
         messenger_result = self.messenger.successor(argument)
         core_object_result = self.core_object.successor(argument)
         self.assertEqual(messenger_result, core_object_result)
-        self.responder.notify.assert_called_once_with('successor', argument)
+        self.responder.notify.assert_called_once_with(('successor', (argument,), {}))
 
 
 if __name__ == '__main__':

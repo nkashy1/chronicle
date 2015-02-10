@@ -82,9 +82,9 @@ class Messenger(object):
     
     def _notify_responder_(self, attribute_name, *args, **kwargs):
         if attribute_name in self._core_members_:
-            self._responder_.notify(attribute_name)
+            self._responder_.notify((attribute_name, None, None))
         elif attribute_name in self._core_methods_:
-            self._responder_.notify(attribute_name, *args, **kwargs)
+            self._responder_.notify((attribute_name, args, kwargs))
         else:
             raise MessengerAttributeError('Notification request for unregistered attribute.')
 
