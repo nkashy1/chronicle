@@ -85,7 +85,10 @@ class Messenger(object):
         self._core_methods_.append(method_name)
     
     def _register_with_responder_(self):
-        self._responder_.register(self, self._core_object_)
+        core_object_state = {}
+        for member in self._core_members_:
+            core_object_state[member] = getattr(self._core_object_, member)
+        self._responder_.register(self, self._core_object_, core_object_state)
     
     def _notify_responder_(self, attribute_name, returned, *args, **kwargs):
         if attribute_name in self._core_members_:

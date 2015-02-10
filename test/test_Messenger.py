@@ -32,7 +32,10 @@ class MessengerBaseTests(unittest.TestCase):
             self._private_attribute = None
     
     def test_initialization(self):
-        self.responder.register.assert_called_once_with(self.messenger, self.core_object)
+        state = {}
+        for member in self.messenger._core_members_:
+            state[member] = getattr(self.core_object, member)
+        self.responder.register.assert_called_once_with(self.messenger, self.core_object, state)
     
     def test_nonmagical_attributes_existence(self):
         core_object_attributes = dir(self.core_object)

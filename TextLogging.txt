@@ -1,0 +1,27 @@
+---
+REGISTRATION:
+Messenger: <chronicle.messenger.Messenger object at 0x01E205D0>
+Object: <__main__.TestClass object at 0x01DCD3D0>
+State: zero=0
+Registration time: 2015-02-10 07:59:56.593000
+---
+Messenger: <chronicle.messenger.Messenger object at 0x01E205D0>
+Object: <__main__.TestClass object at 0x01DCD3D0>
+Attribute: zero
+Access: MEMBER
+Return: 0
+Time of notification: 2015-02-10 07:59:56.626000
+---
+Messenger: <chronicle.messenger.Messenger object at 0x01E205D0>
+Object: <__main__.TestClass object at 0x01DCD3D0>
+Attribute: successor
+Access: METHOD, ARGS: (6,), KEYWORD ARGS: {}
+Return: 7
+Time of notification: 2015-02-10 07:59:56.627000
+---
+Messenger: <chronicle.messenger.Messenger object at 0x01E205D0>
+Object: <__main__.TestClass object at 0x01DCD3D0>
+Attribute: successor
+Access: METHOD, ARGS: (-5.37,), KEYWORD ARGS: {}
+Return: -4.37
+Time of notification: 2015-02-10 07:59:56.629000

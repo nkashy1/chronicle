@@ -10,7 +10,7 @@ class Responder(object):
     __metaclass__ = abc.ABCMeta
     
     @abc.abstractmethod
-    def register(self, messenger, core_object):
+    def register(self, messenger, core_object, core_object_state):
         return None
     
     @abc.abstractmethod

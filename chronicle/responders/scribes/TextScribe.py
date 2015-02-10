@@ -13,14 +13,22 @@ class TextScribe(Responder):
         self.file_name = file_name_txt
         self.messengers = {}
     
-    def register(self, messenger, core_object):
+    def register(self, messenger, core_object, core_object_state):
+        time_now = datetime.datetime.utcnow()
         self.messengers[messenger] = core_object
+        self.write_registration(messenger, core_object, core_object_state, time_now)
     
     def notify(self, messenger, notification):
         time_now = datetime.datetime.utcnow()
-        self.write(messenger, notification, time_now)
+        self.write_notification(messenger, notification, time_now)
     
-    def write(self, messenger, notification, notification_time):
+    def write_registration(self, messenger, core_object, core_object_state, registration_time):
+        state = ','.join(['{0}={1}'.format(member, core_object_state[member]) for member in core_object_state])
+        log_string = '---\nREGISTRATION:\nMessenger: {0}\nObject: {1}\nState: {2}\nRegistration time: {3}\n'.format(messenger, core_object, state, registration_time)
+        with open(self.file_name, 'ab') as txt:
+            txt.write(log_string)
+    
+    def write_notification(self, messenger, notification, notification_time):
         try:
             core_object = self.messengers[messenger]
         except KeyError:
