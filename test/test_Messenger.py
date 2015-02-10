@@ -77,8 +77,9 @@ class MessengerMemberTests(MessengerBaseTests):
         core_object_attributes = dir(self.core_object)
         for attribute in core_object_attributes:
             if attribute in self.messenger._core_members_:
-                test = getattr(self.messenger, attribute)
-                self.responder.notify.assert_called_once_with(self.messenger, (attribute, None, None))
+                attribute_value = getattr(self.messenger, attribute)
+                expected_notification = (attribute, attribute_value, None, None)
+                self.responder.notify.assert_called_once_with(self.messenger, expected_notification)
 
 
 class MessengerMethodTests(MessengerBaseTests):
@@ -96,14 +97,16 @@ class MessengerMethodTests(MessengerBaseTests):
         messenger_result = self.messenger.method()
         core_object_result = self.core_object.method()
         self.assertEqual(messenger_result, core_object_result)
-        self.responder.notify.assert_called_once_with(self.messenger, ('method', (), {}))
+        expected_notification = ('method', 'method', (), {})
+        self.responder.notify.assert_called_once_with(self.messenger, expected_notification)
     
     def test_successor_call(self):
         argument = 1
         messenger_result = self.messenger.successor(argument)
         core_object_result = self.core_object.successor(argument)
         self.assertEqual(messenger_result, core_object_result)
-        self.responder.notify.assert_called_once_with(self.messenger, ('successor', (argument,), {}))
+        expected_notification = ('successor', self.core_object.successor(argument), (argument,), {})
+        self.responder.notify.assert_called_once_with(self.messenger, expected_notification)
 
 
 if __name__ == '__main__':

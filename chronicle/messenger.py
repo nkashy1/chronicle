@@ -55,8 +55,9 @@ class Messenger(object):
             return object.__getattribute__(self, name)
         
         if name in self._core_members_:
-            self._notify_responder_(name)
-            return self._core_object_.__getattribute__(name)
+            value =  self._core_object_.__getattribute__(name)
+            self._notify_responder_(name, value)
+            return value
         else:
             return object.__getattribute__(self, name)
     
@@ -77,8 +78,8 @@ class Messenger(object):
     def _make_messenger_method_(self, method_name, method):
         @functools.wraps(method)
         def messenger_method(self, *args, **kwargs):
-            self._notify_responder_(method_name, *args, **kwargs)
             result = method(*args, **kwargs)
+            self._notify_responder_(method_name, result, *args, **kwargs)
             return result
         setattr(self, method_name, types.MethodType(messenger_method, self))
         self._core_methods_.append(method_name)
@@ -86,11 +87,11 @@ class Messenger(object):
     def _register_with_responder_(self):
         self._responder_.register(self, self._core_object_)
     
-    def _notify_responder_(self, attribute_name, *args, **kwargs):
+    def _notify_responder_(self, attribute_name, returned, *args, **kwargs):
         if attribute_name in self._core_members_:
-            self._responder_.notify(self, (attribute_name, None, None))
+            self._responder_.notify(self, (attribute_name, returned, None, None))
         elif attribute_name in self._core_methods_:
-            self._responder_.notify(self, (attribute_name, args, kwargs))
+            self._responder_.notify(self, (attribute_name, returned, args, kwargs))
         else:
             raise MessengerAttributeError('Notification request for unregistered attribute.')
 

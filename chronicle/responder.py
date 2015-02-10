@@ -16,3 +16,7 @@ class Responder(object):
     @abc.abstractmethod
     def notify(self, messenger, notification):
         return None
+
+
+class ResponderKeyError(Exception):
+    pass
