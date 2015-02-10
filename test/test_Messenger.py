@@ -32,7 +32,7 @@ class MessengerBaseTests(unittest.TestCase):
             self._private_attribute = None
     
     def test_initialization(self):
-        return True
+        self.responder.register.assert_called_once_with(self.messenger, self.core_object)
     
     def test_nonmagical_attributes_existence(self):
         core_object_attributes = dir(self.core_object)
@@ -78,7 +78,7 @@ class MessengerMemberTests(MessengerBaseTests):
         for attribute in core_object_attributes:
             if attribute in self.messenger._core_members_:
                 test = getattr(self.messenger, attribute)
-                self.responder.notify.assert_called_once_with((attribute, None, None))
+                self.responder.notify.assert_called_once_with(self.messenger, (attribute, None, None))
 
 
 class MessengerMethodTests(MessengerBaseTests):
@@ -96,14 +96,14 @@ class MessengerMethodTests(MessengerBaseTests):
         messenger_result = self.messenger.method()
         core_object_result = self.core_object.method()
         self.assertEqual(messenger_result, core_object_result)
-        self.responder.notify.assert_called_once_with(('method', (), {}))
+        self.responder.notify.assert_called_once_with(self.messenger, ('method', (), {}))
     
     def test_successor_call(self):
         argument = 1
         messenger_result = self.messenger.successor(argument)
         core_object_result = self.core_object.successor(argument)
         self.assertEqual(messenger_result, core_object_result)
-        self.responder.notify.assert_called_once_with(('successor', (argument,), {}))
+        self.responder.notify.assert_called_once_with(self.messenger, ('successor', (argument,), {}))
 
 
 if __name__ == '__main__':

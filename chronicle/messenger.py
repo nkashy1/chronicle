@@ -20,7 +20,8 @@ class Messenger(object):
                                    '_notify_responder_',
                                    '__getattribute__',
                                    '__setattr__',
-                                   '__delattr__']
+                                   '__delattr__',
+                                   '_register_with_responder_']
     
     def __init__(self, core_object, responder):
         self._responder_ = responder
@@ -44,6 +45,8 @@ class Messenger(object):
         
         for attribute_name in self._core_magic_:
             pass
+        
+        self._register_with_responder_()
     
     def __getattribute__(self, name):
         if name == '_forbidden_attribute_names_':
@@ -80,11 +83,14 @@ class Messenger(object):
         setattr(self, method_name, types.MethodType(messenger_method, self))
         self._core_methods_.append(method_name)
     
+    def _register_with_responder_(self):
+        self._responder_.register(self, self._core_object_)
+    
     def _notify_responder_(self, attribute_name, *args, **kwargs):
         if attribute_name in self._core_members_:
-            self._responder_.notify((attribute_name, None, None))
+            self._responder_.notify(self, (attribute_name, None, None))
         elif attribute_name in self._core_methods_:
-            self._responder_.notify((attribute_name, args, kwargs))
+            self._responder_.notify(self, (attribute_name, args, kwargs))
         else:
             raise MessengerAttributeError('Notification request for unregistered attribute.')
 
